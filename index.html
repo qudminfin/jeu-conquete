@@ -1504,19 +1504,14 @@ function buyTech(key) {
   const lvl = G.players[cp].techs[key];
   const t = TECHS[key];
   const cost = t.levels[lvl].cost;
+
   Object.entries(cost).forEach(([k,v]) => res[k] -= v);
   G.players[cp].techs[key]++;
 
-  // Apply immediate effects
-  if (key === 'productivite') {
-    G.actionCount = 1 + G.players[cp].techs.productivite;
-    G.actionsLeft = Math.min(G.actionsLeft + 1, G.actionCount);
-  }
-
   document.getElementById('tech-modal').classList.add('hidden');
   spendAction();
-  addLog(`Technologie : ${t.name} niveau ${G.players[cp].techs[key]} débloquée !`, 'tech');
-  notify(`🔬 ${t.name} Niv.${G.players[cp].techs[key]} !`, 'var(--teal)');
+
+  addLog(`Technologie améliorée !`, 'tech');
   renderAll();
 }
 
@@ -1724,6 +1719,13 @@ function applyEraVisuals() {
   const era = getCurrentEra();
   document.body.style.background = era.color;
 }
+
+//
+//
+//
+window.onload = () => {
+  console.log("JS chargé !");
+};
 </script>
 </body>
 </html>
