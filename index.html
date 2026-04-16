@@ -1580,6 +1580,114 @@ function showVictory(player, pid) {
   `;
 }
 
+
+//
+//
+//
+// Trouver les cases autour
+function getAdjacentCells(gridId, idx) {
+  const grid = G.grids[gridId];
+  const size = gridId === 'common' ? 5 : 7;
+
+  const r = Math.floor(idx / size);
+  const c = idx % size;
+
+  const dirs = [
+    [1,0],[-1,0],[0,1],[0,-1]
+  ];
+
+  const result = [];
+
+  for (const [dr,dc] of dirs) {
+    const nr = r + dr;
+    const nc = c + dc;
+
+    if (nr >= 0 && nr < size && nc >= 0 && nc < size) {
+      const nidx = nr * size + nc;
+      result.push({
+        grid: gridId,
+        idx: nidx,
+        cell: grid[nidx]
+      });
+    }
+  }
+
+  return result;
+}
+
+//
+// DEPLACEMENT
+//
+function isMoveTarget(gridId, idx) {
+  if (!G.selectedCell) return false;
+
+  const from = G.selectedCell;
+  const adj = getAdjacentCells(from.grid, from.idx);
+
+  return adj.some(a => a.grid === gridId && a.idx === idx && !a.cell.pion && a.cell.developed);
+}
+
+function movePion(fromGrid, fromIdx, toGrid, toIdx) {
+  const fromCell = G.grids[fromGrid][fromIdx];
+  const toCell = G.grids[toGrid][toIdx];
+
+  toCell.pion = fromCell.pion;
+  fromCell.pion = null;
+
+  G.actionsLeft--;
+
+  addLog("Pion déplacé");
+  G.selectedCell = null;
+  renderAll();
+}
+
+//
+//attaque
+//
+function isAttackTarget(gridId, idx) {
+  if (!G.selectedCell) return false;
+
+  const from = G.selectedCell;
+  const adj = getAdjacentCells(from.grid, from.idx);
+
+  return adj.some(a =>
+    a.grid === gridId &&
+    a.idx === idx &&
+    a.cell.pion &&
+    a.cell.pion.owner !== G.currentPlayer
+  );
+}
+
+//
+//developper
+//
+function isDevelopTarget(gridId, idx) {
+  const cell = G.grids[gridId][idx];
+  if (cell.developed) return false;
+
+  const adj = getAdjacentCells(gridId, idx);
+  return adj.some(a => a.cell.developed);
+}
+
+//
+//Collecte
+//
+function doCollect() {
+  let gained = 0;
+
+  for (const cell of G.grids.p1) {
+    if (cell.developed && cell.resource) {
+      G.players[1].resources[cell.resource]++;
+      gained++;
+    }
+  }
+
+  G.actionsLeft--;
+  addLog(`+${gained} ressources collectées`);
+  renderAll();
+}
+
+
 //
 // EFFECT
 //
