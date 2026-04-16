@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Peuples en Conquête</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #06060f;
+  --bg2: #0d0d1e;
+  --bg3: #141428;
+  --panel: #1a1a32;
+  --border: #2a2a4e;
+  --gold: #e8b84b;
+  --gold2: #f5d070;
+  --orange: #e87d4b;
+  --teal: #4be8c8;
+  --purple: #9b7fe8;
+  --red: #e84b6a;
+  --blue: #4b9be8;
+  --green: #7be84b;
+  --white: #f0ede8;
+  --muted: #8884a8;
+
+  /* Era colors */
+  --era-stone: #8b5e3c;
+  --era-medieval: #6b8e4e;
+  --era-renaissance: #4e6b8e;
+  --era-industrial: #8e6b4e;
+  --era-modern: #4e8e7b;
+  --era-future: #6b4e8e;
+  --era-space: #3a6bae;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'Cinzel', serif;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* STARS BACKGROUND */
+#stars {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(ellipse at 20% 50%, rgba(74,58,142,0.15) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 20%, rgba(59,106,174,0.12) 0%, transparent 50%),
+              var(--bg);
+}
+.star {
+  position: absolute; border-radius: 50%; background: white;
+  animation: twinkle var(--d, 3s) var(--del, 0s) infinite alternate;
+}
+@keyframes twinkle { 0%{opacity:.1} 100%{opacity:.8} }
+
+/* SCREENS */
+.screen { position: fixed; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.screen.hidden { display: none; }
+
+/* TITLE SCREEN */
+#title-screen {
+  background: transparent;
+  text-align: center;
+}
+.title-logo {
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: clamp(2rem, 6vw, 5rem);
+  color: var(--gold);
+  text-shadow: 0 0 40px rgba(232,184,75,.5), 0 0 80px rgba(232,184,75,.2);
+  letter-spacing: 0.05em;
+  line-height: 1.1;
+  margin-bottom: .3em;
+}
+.title-sub {
+  font-family: 'IM Fell English', serif;
+  font-size: clamp(.9rem, 2vw, 1.3rem);
+  color: var(--muted);
+  font-style: italic;
+  letter-spacing: .15em;
+  margin-bottom: 3rem;
+}
+.era-strip {
+  display: flex; gap: 8px; justify-content: center; margin-bottom: 3rem; flex-wrap: wrap;
+}
+.era-badge {
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: .65rem;
+  letter-spacing: .12em;
+  border: 1px solid;
+  text-transform: uppercase;
+  animation: fadeUp .6s backwards;
+}
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--orange) 100%);
+  color: var(--bg);
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: .12em;
+  padding: 14px 40px;
+  border: none; cursor: pointer;
+  clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+  transition: all .2s;
+  text-transform: uppercase;
+}
+.btn-primary:hover { transform: scale(1.05); filter: brightness(1.15); }
+
+.btn-sec {
+  background: transparent;
+  color: var(--muted);
+  font-family: 'Cinzel', serif;
+  font-size: .8rem;
+  letter-spacing: .1em;
+  padding: 10px 24px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all .2s;
+  text-transform: uppercase;
+  margin-top: .5rem;
+}
+.btn-sec:hover { color: var(--white); border-color: var(--muted); }
+
+/* SETUP SCREEN */
+#setup-screen {
+  background: rgba(6,6,15,.92);
+  backdrop-filter: blur(10px);
+}
+.setup-box {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 2.5rem 2rem;
+  width: min(480px, 90vw);
+  position: relative;
+}
+.setup-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--orange), var(--purple));
+}
+.setup-title {
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: 1.2rem; color: var(--gold);
+  text-align: center; margin-bottom: 1.5rem;
+}
+.form-group { margin-bottom: 1.2rem; }
+.form-label { font-size: .7rem; letter-spacing: .12em; color: var(--muted); text-transform: uppercase; display: block; margin-bottom: .4rem; }
+.form-input, .form-select {
+  width: 100%; background: var(--bg2); border: 1px solid var(--border);
+  color: var(--white); padding: 10px 14px;
+  font-family: 'Cinzel', serif; font-size: .85rem;
+  outline: none; transition: border-color .2s;
+}
+.form-input:focus, .form-select:focus { border-color: var(--gold); }
+.form-select option { background: var(--bg2); }
+.people-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.people-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  padding: .7rem; cursor: pointer; transition: all .15s;
+  text-align: center;
+}
+.people-card:hover, .people-card.selected {
+  border-color: var(--gold); background: rgba(232,184,75,.08);
+}
+.people-card .pc-name { font-size: .8rem; color: var(--gold); font-weight: 600; }
+.people-card .pc-bonus { font-size: .65rem; color: var(--muted); font-family: 'IM Fell English', serif; font-style: italic; margin-top: .2rem; }
+
+/* GAME SCREEN */
+#game-screen {
+  background: transparent;
+  display: flex; flex-direction: column;
+  width: 100vw; height: 100vh;
+  overflow: hidden;
+}
+
+/* TOP BAR */
+.top-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 20px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0; z-index: 20;
+  gap: 12px;
+}
+.top-brand { font-family: 'Cinzel Decorative', cursive; font-size: .8rem; color: var(--gold); white-space: nowrap; }
+.turn-info { display: flex; align-items: center; gap: 10px; }
+.turn-badge {
+  background: linear-gradient(135deg, var(--gold), var(--orange));
+  color: var(--bg); padding: 4px 16px;
+  font-size: .7rem; font-weight: 700; letter-spacing: .1em;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+}
+.era-indicator {
+  font-size: .65rem; letter-spacing: .1em; color: var(--muted);
+  border: 1px solid var(--border); padding: 3px 10px;
+  text-transform: uppercase;
+}
+.actions-left {
+  display: flex; align-items: center; gap: 6px;
+}
+.action-pip {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--gold); transition: all .2s;
+}
+.action-pip.used { background: var(--border); }
+.btn-end-turn {
+  background: transparent; border: 1px solid var(--gold);
+  color: var(--gold); font-family: 'Cinzel', serif;
+  font-size: .65rem; letter-spacing: .1em; text-transform: uppercase;
+  padding: 6px 16px; cursor: pointer; transition: all .2s;
+}
+.btn-end-turn:hover { background: var(--gold); color: var(--bg); }
+
+/* MAIN LAYOUT */
+.game-main {
+  flex: 1; display: flex; overflow: hidden;
+  min-height: 0;
+}
+
+/* LEFT PANEL */
+.left-panel {
+  width: 200px; flex-shrink: 0;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.panel-title {
+  font-size: .6rem; letter-spacing: .12em; color: var(--muted);
+  text-transform: uppercase; padding: 10px 14px 6px;
+  border-bottom: 1px solid var(--border);
+}
+.resources-grid { padding: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.res-chip {
+  background: var(--bg3); border: 1px solid var(--border);
+  padding: 6px 8px; text-align: center; cursor: pointer;
+  transition: all .15s; position: relative;
+}
+.res-chip:hover { border-color: var(--gold); }
+.res-chip .rc-icon { font-size: 1.1rem; display: block; }
+.res-chip .rc-name { font-size: .55rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.res-chip .rc-count {
+  position: absolute; top: 2px; right: 4px;
+  font-size: .7rem; font-weight: 700; color: var(--gold);
+}
+.tech-list { padding: 8px 10px; flex: 1; overflow-y: auto; }
+.tech-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 5px 6px; border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background .15s;
+}
+.tech-item:hover { background: rgba(255,255,255,.04); }
+.tech-item .ti-name { font-size: .65rem; color: var(--white); }
+.tech-item .ti-level { display: flex; gap: 2px; }
+.tech-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--border);
+}
+.tech-dot.active { background: var(--teal); }
+
+/* CENTER - BOARD */
+.board-container {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  overflow: hidden; position: relative; min-width: 0;
+}
+.board-wrap {
+  display: flex; gap: 8px; align-items: center;
+}
+.board-label {
+  font-size: .55rem; letter-spacing: .1em; color: var(--muted);
+  text-transform: uppercase; text-align: center; margin-bottom: 4px;
+}
+.grid {
+  display: grid;
+  gap: 2px;
+}
+.grid-personal { grid-template-columns: repeat(7,1fr); }
+.grid-common   { grid-template-columns: repeat(5,1fr); }
+
+.cell {
+  width: 42px; height: 42px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  cursor: pointer; position: relative;
+  transition: all .15s;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .7rem;
+}
+.cell:hover { border-color: var(--gold); z-index: 2; }
+.cell.developed { background: var(--bg2); border-color: #3a3a5a; }
+.cell.capital { background: rgba(232,184,75,.15); border-color: var(--gold); border-width: 2px; }
+.cell.selected { border-color: var(--teal) !important; border-width: 2px; box-shadow: 0 0 0 2px rgba(75,232,200,.2); }
+.cell.reachable { border-color: var(--green) !important; background: rgba(123,232,75,.06); }
+.cell.attackable { border-color: var(--red) !important; background: rgba(232,75,106,.06); }
+.cell.enemy { background: rgba(232,75,106,.08); }
+
+.pion-marker {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .9rem;
+  border: 2px solid rgba(255,255,255,.2);
+  transition: all .2s;
+  position: relative;
+}
+.pion-marker.face-down {
+  background: var(--panel);
+  font-size: .7rem; color: var(--muted);
+}
+.pion-marker.face-up { background: var(--bg); }
+.pion-p1 { border-color: var(--gold); }
+.pion-p2 { border-color: var(--blue); }
+.pion-hp {
+  position: absolute; top: -4px; right: -4px;
+  background: var(--red); color: white;
+  width: 12px; height: 12px; border-radius: 50%;
+  font-size: .5rem; display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+}
+
+.separator {
+  width: 2px; height: 100%;
+  background: linear-gradient(to bottom, transparent, var(--purple), transparent);
+  min-height: 200px;
+  opacity: .4;
+}
+
+/* RIGHT PANEL */
+.right-panel {
+  width: 220px; flex-shrink: 0;
+  background: var(--bg2);
+  border-left: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.action-buttons { padding: 10px; display: flex; flex-direction: column; gap: 5px; }
+.action-btn {
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--white); font-family: 'Cinzel', serif;
+  font-size: .65rem; letter-spacing: .08em; text-transform: uppercase;
+  padding: 8px 12px; cursor: pointer; text-align: left;
+  transition: all .15s; display: flex; align-items: center; gap: 8px;
+}
+.action-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); }
+.action-btn:disabled { opacity: .3; cursor: not-allowed; }
+.action-btn.active-mode { border-color: var(--teal); color: var(--teal); background: rgba(75,232,200,.06); }
+.ab-icon { font-size: .9rem; }
+.ab-cost {
+  margin-left: auto; font-size: .6rem;
+  background: var(--bg); border: 1px solid var(--border);
+  padding: 1px 5px; color: var(--muted);
+}
+
+.log-box { flex: 1; overflow-y: auto; padding: 8px 10px; }
+.log-entry {
+  font-size: .6rem; color: var(--muted);
+  font-family: 'IM Fell English', serif; font-style: italic;
+  padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,.03);
+  line-height: 1.4;
+}
+.log-entry.important { color: var(--gold); font-style: normal; font-family: 'Cinzel', serif; }
+.log-entry.combat { color: var(--red); }
+.log-entry.tech { color: var(--teal); }
+
+/* BOTTOM BAR */
+.bottom-bar {
+  flex-shrink: 0;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 6px 16px;
+  display: flex; align-items: center; gap: 16px;
+  min-height: 50px;
+}
+.selected-info {
+  flex: 1; font-size: .7rem;
+  font-family: 'IM Fell English', serif; font-style: italic;
+  color: var(--muted);
+}
+.selected-info strong { font-family: 'Cinzel', serif; font-style: normal; color: var(--white); }
+.player-portraits { display: flex; gap: 8px; }
+.player-portrait {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border: 1px solid var(--border);
+  font-size: .65rem;
+}
+.player-portrait.active-player { border-color: var(--gold); }
+.portrait-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(6,6,15,.85);
+  z-index: 100; display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.modal-overlay.hidden { display: none; }
+.modal-box {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 2rem;
+  width: min(420px, 90vw);
+  position: relative;
+  animation: modalIn .2s ease;
+}
+@keyframes modalIn { from{opacity:0;transform:scale(.96)} to{opacity:1;transform:none} }
+.modal-box::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 2px; background: linear-gradient(90deg, var(--red), var(--orange), var(--gold));
+}
+.modal-title { font-family: 'Cinzel Decorative', cursive; font-size: 1rem; color: var(--gold); margin-bottom: 1rem; }
+.modal-body { font-family: 'IM Fell English', serif; font-size: .9rem; line-height: 1.6; color: var(--white); margin-bottom: 1.5rem; }
+.combat-result {
+  display: grid; grid-template-columns: 1fr auto 1fr;
+  gap: 12px; align-items: center; margin-bottom: 1.2rem;
+}
+.combatant { text-align: center; padding: .8rem; background: var(--bg2); border: 1px solid var(--border); }
+.combatant .c-type { font-size: 1.5rem; margin-bottom: .3rem; }
+.combatant .c-name { font-size: .7rem; color: var(--gold); letter-spacing: .08em; }
+.combatant .c-stats { font-size: .6rem; color: var(--muted); margin-top: .3rem; }
+.vs-text { font-family: 'Cinzel Decorative', cursive; color: var(--red); font-size: .9rem; text-align: center; }
+.result-banner {
+  text-align: center; padding: .8rem;
+  font-family: 'Cinzel', serif; font-size: .85rem; letter-spacing: .1em;
+  margin-bottom: 1rem;
+}
+.result-banner.victory { background: rgba(123,232,75,.12); color: var(--green); border: 1px solid var(--green); }
+.result-banner.defeat  { background: rgba(232,75,106,.12); color: var(--red);   border: 1px solid var(--red); }
+.result-banner.draw    { background: rgba(232,184,75,.12); color: var(--gold);  border: 1px solid var(--gold); }
+
+/* SHOP */
+.shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.shop-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  padding: .7rem; cursor: pointer; transition: all .15s;
+  text-align: center;
+}
+.shop-card:hover:not(.cant-afford) { border-color: var(--gold); background: rgba(232,184,75,.05); }
+.shop-card.cant-afford { opacity: .4; cursor: not-allowed; }
+.shop-card .sc-icon { font-size: 1.3rem; display: block; margin-bottom: .3rem; }
+.shop-card .sc-name { font-size: .7rem; color: var(--gold); }
+.shop-card .sc-cost { font-size: .6rem; color: var(--muted); margin-top: .2rem; font-family: 'IM Fell English', serif; font-style: italic; }
+
+/* NOTIFICATION */
+.notif {
+  position: fixed; top: 60px; left: 50%; transform: translateX(-50%);
+  background: var(--panel); border: 1px solid var(--gold);
+  padding: 8px 24px; font-size: .75rem; letter-spacing: .1em;
+  z-index: 200; transition: all .3s; pointer-events: none;
+  white-space: nowrap;
+}
+.notif.hidden { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ERA TRANSITION */
+.era-overlay {
+  position: fixed; inset: 0; z-index: 300;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  pointer-events: none; opacity: 0; transition: opacity .5s;
+}
+.era-overlay.show { opacity: 1; pointer-events: all; }
+.era-title {
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: 3rem; color: var(--gold);
+  text-shadow: 0 0 60px currentColor;
+}
+.era-sub { font-family: 'IM Fell English', serif; font-style: italic; color: var(--muted); font-size: 1.1rem; margin-top: .5rem; }
+
+/* VICTORY */
+#victory-screen {
+  background: rgba(6,6,15,.95);
+  backdrop-filter: blur(20px);
+  text-align: center;
+}
+.victory-title {
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: clamp(1.5rem, 5vw, 3.5rem);
+  background: linear-gradient(135deg, var(--gold), var(--orange));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin-bottom: .5rem;
+}
+.victory-name { font-size: 1.5rem; color: var(--white); margin-bottom: 1rem; }
+.victory-stats { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem; }
+.vstat { text-align: center; padding: .8rem 1.2rem; border: 1px solid var(--border); }
+.vstat .vs-n { font-size: 1.4rem; font-weight: 700; color: var(--gold); }
+.vstat .vs-l { font-size: .65rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+
+<!-- TITLE -->
+<div id="title-screen" class="screen">
+  <div class="title-logo">Peuples en<br>Conquête</div>
+  <div class="title-sub">Des premiers colons aux étoiles</div>
+  <div class="era-strip" id="era-strip"></div>
+  <button class="btn-primary" onclick="showSetup()">Commencer la conquête</button>
+  <button class="btn-sec" onclick="showRules()">📖 Rappel des règles</button>
+</div>
+
+<!-- SETUP -->
+<div id="setup-screen" class="screen hidden">
+  <div class="setup-box">
+    <div class="setup-title">⚔ Configuration</div>
+    <div class="form-group">
+      <label class="form-label">Votre nom de conquérant</label>
+      <input type="text" class="form-input" id="p1name" value="Le Conquérant" placeholder="Votre nom…">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Adversaire</label>
+      <input type="text" class="form-input" id="p2name" value="L'Adversaire" placeholder="Nom adversaire…">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Taille du plateau (X cases)</label>
+      <select class="form-select" id="xsize">
+        <option value="3">Escarmouche (X=3) — ~20 min</option>
+        <option value="5" selected>Standard (X=5) — ~45 min</option>
+        <option value="7">Grand (X=7) — ~90 min</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Votre peuple</label>
+      <div class="people-grid" id="people-grid"></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:1.5rem">
+      <button class="btn-sec" style="flex:1" onclick="showTitle()">← Retour</button>
+      <button class="btn-primary" style="flex:2;clip-path:none" onclick="startGame()">Lancer la partie →</button>
+    </div>
+  </div>
+</div>
+
+<!-- GAME -->
+<div id="game-screen" class="screen hidden">
+  <div class="top-bar">
+    <div class="top-brand">⚔ PeC</div>
+    <div class="turn-info">
+      <div class="turn-badge" id="turn-badge">Tour 1 — P1</div>
+      <div class="era-indicator" id="era-label">Ère : Antiquité</div>
+    </div>
+    <div class="actions-left" id="action-pips"></div>
+    <button class="btn-end-turn" onclick="endTurn()">Fin du tour ⟶</button>
+  </div>
+
+  <div class="game-main">
+    <!-- LEFT -->
+    <div class="left-panel">
+      <div class="panel-title">Ressources</div>
+      <div class="resources-grid" id="res-grid"></div>
+      <div class="panel-title">Technologies</div>
+      <div class="tech-list" id="tech-list"></div>
+    </div>
+
+    <!-- BOARD -->
+    <div class="board-container">
+      <div class="board-wrap">
+        <div>
+          <div class="board-label" id="p1-label">Vos Terres</div>
+          <div class="grid grid-personal" id="grid-p1"></div>
+        </div>
+        <div class="separator"></div>
+        <div>
+          <div class="board-label">Plateau Commun</div>
+          <div class="grid grid-common" id="grid-common"></div>
+        </div>
+        <div class="separator"></div>
+        <div>
+          <div class="board-label" id="p2-label">Terres Ennemies</div>
+          <div class="grid grid-personal" id="grid-p2"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right-panel">
+      <div class="panel-title">Actions</div>
+      <div class="action-buttons" id="action-buttons"></div>
+      <div class="panel-title">Journal de Conquête</div>
+      <div class="log-box" id="log-box"></div>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <div class="selected-info" id="selected-info">Cliquez sur une case pour commencer.</div>
+    <div class="player-portraits" id="player-portraits"></div>
+  </div>
+</div>
+
+<!-- VICTORY -->
+<div id="victory-screen" class="screen hidden">
+  <div class="victory-title">Victoire !</div>
+  <div class="victory-name" id="victory-name">— — —</div>
+  <div class="victory-stats" id="victory-stats"></div>
+  <button class="btn-primary" onclick="location.reload()">Nouvelle conquête</button>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay hidden" id="combat-modal">
+  <div class="modal-box">
+    <div class="modal-title">⚔ Résolution du Combat</div>
+    <div class="combat-result" id="combat-result"></div>
+    <div class="result-banner" id="result-banner"></div>
+    <div class="modal-body" id="combat-narration"></div>
+    <button class="btn-primary" style="clip-path:none;width:100%" onclick="closeCombat()">Continuer →</button>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="shop-modal">
+  <div class="modal-box">
+    <div class="modal-title">🏪 Recruter / Construire</div>
+    <div class="modal-body" id="shop-title" style="margin-bottom:.5rem;font-size:.75rem"></div>
+    <div class="shop-grid" id="shop-grid"></div>
+    <button class="btn-sec" style="width:100%;margin-top:1rem" onclick="closeShop()">Fermer</button>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="tech-modal">
+  <div class="modal-box">
+    <div class="modal-title">🔬 Recherche Technologique</div>
+    <div class="shop-grid" id="tech-grid"></div>
+    <button class="btn-sec" style="width:100%;margin-top:1rem" onclick="document.getElementById('tech-modal').classList.add('hidden')">Fermer</button>
+  </div>
+</div>
+
+<div class="notif hidden" id="notif"></div>
+<div class="era-overlay" id="era-overlay">
+  <div class="era-title" id="era-overlay-title"></div>
+  <div class="era-sub" id="era-overlay-sub"></div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+// BOT
+// ════════════════════════════════════════════════════════════
+
+function isAI(playerId) {
+  return playerId === 2;
+}
+
+function aiTurn() {
+  let actions = G.actionsLeft;
+
+  while (actions > 0) {
+    if (tryAIAttack()) { actions--; continue; }
+    if (tryAIDevelop()) { actions--; continue; }
+    if (tryAIRecruit()) { actions--; continue; }
+    if (tryAIMove()) { actions--; continue; }
+    break;
+  }
+
+  setTimeout(endTurn, 800);
+}
+
+// ════════════════════════════════════════════════════════════
+// STARS
+// ════════════════════════════════════════════════════════════
+(function(){
+  const s = document.getElementById('stars');
+  for(let i=0;i<120;i++){
+    const el = document.createElement('div');
+    el.className='star';
+    const sz = Math.random()*2+.5;
+    el.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${2+Math.random()*4}s;--del:${Math.random()*3}s;opacity:${.1+Math.random()*.6}`;
+    s.appendChild(el);
+  }
+})();
+
+// ════════════════════════════════════════════════════════════
+// DATA
+// ════════════════════════════════════════════════════════════
+const ERAS = [
+  {name:'Antiquité',   color:'#8b5e3c', turn:1},
+  {name:'Médiéval',   color:'#6b8e4e', turn:8},
+  {name:'Renaissance',color:'#4e6b8e', turn:15},
+  {name:'Industriel', color:'#8e6b4e', turn:22},
+  {name:'Moderne',    color:'#4e8e7b', turn:29},
+  {name:'Futur',      color:'#6b4e8e', turn:36},
+  {name:'Spatial',    color:'#3a6bae', turn:43},
+];
+
+const PEOPLES = [
+  {id:'conquerors', name:'Conquérants', bonus:'+1 ATK Guerriers', icon:'⚔️'},
+  {id:'merchants',  name:'Marchands',   bonus:'+1 res/collecte',  icon:'💰'},
+  {id:'scholars',   name:'Érudits',     bonus:'Techno -1 res',    icon:'📚'},
+  {id:'shadows',    name:'Ombres',      bonus:'Espion pas cher',  icon:'🕵️'},
+  {id:'engineers',  name:'Ingénieurs',  bonus:'Dev. gratuit 1x',  icon:'⚙️'},
+  {id:'starborn',   name:'Étoilés',     bonus:'Transport 1 offert',icon:'🚀'},
+];
+
+const PION_DATA = {
+  roi:        {name:'Roi',        icon:'👑', atk:2, def:3, hp:3, range:1, cost:{},            desc:'Révèle 1 case ou lance une Recherche'},
+  explorateur:{name:'Explorateur',icon:'🚶', atk:1, def:1, hp:1, range:1, cost:{food:1},      desc:'Développe 1 case gratuite/tour'},
+  guerrier:   {name:'Guerrier',   icon:'⚔️', atk:3, def:2, hp:2, range:1, cost:{stone:1},     desc:'Charge : +1 ATK si adjacent'},
+  frondeur:   {name:'Frondeur',   icon:'🏹', atk:2, def:1, hp:1, range:2, cost:{metal:1},     desc:'Tir indirect, portée 2'},
+  bouclier:   {name:'Bouclier',   icon:'🛡️', atk:1, def:4, hp:2, range:1, cost:{wood:1},      desc:'Parade : annule 1 attaque/tour'},
+  espion:     {name:'Espion',     icon:'🕵️', atk:2, def:1, hp:1, range:3, cost:{stone:1,metal:1,wood:1}, desc:'Vole, infiltre, capture'},
+};
+
+const TECHS = {
+  militaire:   {name:'Militaire',   icon:'⚔️', color:'#e84b6a', levels:[
+    {cost:{stone:2,metal:1}, effect:'+1 ATK (Guerrier, Frondeur)'},
+    {cost:{stone:3,metal:2}, effect:'+2 ATK / +1 DEF (tous)'},
+    {cost:{stone:4,metal:3,wood:1}, effect:'+3 ATK, Frondeur portée 4'},
+  ]},
+  economique:  {name:'Économique',  icon:'💰', color:'#7be84b', levels:[
+    {cost:{food:2,wood:1},   effect:'+1 res/collecte'},
+    {cost:{food:3,wood:2},   effect:'+2 res/collecte + 1 carte/tour'},
+    {cost:{food:4,wood:3,metal:1}, effect:'+3 res/collecte'},
+  ]},
+  transport:   {name:'Transport',   icon:'🐎', color:'#4be8c8', levels:[
+    {cost:{wood:1,food:1},   effect:'+1 case/déplacement'},
+    {cost:{wood:2,food:2},   effect:'+2 cases, X−1 pour traverser'},
+    {cost:{wood:3,food:3,stone:1}, effect:'Téléport sur votre territoire'},
+  ]},
+  productivite:{name:'Productivité',icon:'⚙️', color:'#9b7fe8', levels:[
+    {cost:{metal:2,stone:1}, effect:'+1 action/tour'},
+    {cost:{metal:3,stone:2}, effect:'+2 actions/tour'},
+    {cost:{metal:4,stone:3,wood:1}, effect:'+3 actions / Double-tour 1x'},
+  ]},
+};
+
+const RES_INFO = {
+  food: {name:'Nourriture', icon:'🌾'},
+  stone:{name:'Pierre',     icon:'🪨'},
+  metal:{name:'Métal',      icon:'⚙️'},
+  wood: {name:'Bois',       icon:'🪵'},
+  card: {name:'Carte Effet',icon:'✨'},
+};
+
+const NARRATIONS = {
+  victory: [
+    'Votre force écrase l\'adversaire !',
+    'Votre supériorité tactique est sans appel.',
+    'L\'ennemi tombe sous vos coups !',
+  ],
+  defeat: [
+    'Votre pion est repoussé…',
+    'L\'ennemi vous surpasse cette fois.',
+    'Retraite ! Reformez vos rangs.',
+  ],
+  draw: [
+    'Les deux combattants se blessent mutuellement.',
+    'Match nul — les forces s\'équilibrent.',
+    'Personne ne cède de terrain.',
+  ],
+};
+
+// ════════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════════
+let G = {};
+
+function initState(p1name, p2name, X, p1people) {
+  function makeGrid(owner) {
+    const cells = [];
+    for (let r = 0; r < 7; r++) {
+      for (let c = 0; c < 7; c++) {
+        cells.push({
+          r, c, owner, developed: false, pion: null,
+          resource: null, building: null,
+          isCapital: false,
+        });
+      }
+    }
+    // Capital at center
+    const cap = cells[3*7+3];
+    cap.developed = true;
+    cap.isCapital = true;
+    cap.resource = 'food';
+    return cells;
+  }
+  function makeCommon() {
+    const cells = [];
+    for (let r = 0; r < 7; r++) {
+      for (let c = 0; c < 5; c++) {
+        cells.push({ r, c, owner: null, developed: false, pion: null, resource: null });
+      }
+    }
+    return cells;
+  }
+
+  G = {
+    turn: 1,
+    currentPlayer: 1,
+    X: parseInt(X),
+    actionCount: 1,
+    actionsLeft: 1,
+    mode: 'select', // select | move | attack | develop
+    selectedCell: null,
+    players: {
+      1: {
+        name: p1name,
+        people: p1people,
+        resources: {food:2, stone:2, metal:2, wood:2, card:0},
+        techs: {militaire:0, economique:0, transport:0, productivite:0},
+        pionsPlaced: 0,
+        capitalPos: {grid:'p1', idx:3*7+3},
+        kingPos: {grid:'p1', idx:3*7+3},
+        capitalCaptured: false,
+        kingCaptured: false,
+      },
+      2: {
+        name: p2name,
+        people: 'conquerors',
+        resources: {food:2, stone:2, metal:2, wood:2, card:0},
+        techs: {militaire:0, economique:0, transport:0, productivite:0},
+        pionsPlaced: 0,
+        capitalPos: {grid:'p2', idx:3*7+3},
+        kingPos: {grid:'p2', idx:3*7+3},
+        capitalCaptured: false,
+        kingCaptured: false,
+      }
+    },
+    grids: {
+      p1: makeGrid(1),
+      p2: makeGrid(2),
+      common: makeCommon(),
+    },
+    log: [],
+    turnHistory: [],
+    combatPending: null,
+    shopCell: null,
+  };
+
+  // Place king on capitals (face down)
+  G.grids.p1[3*7+3].pion = {type:'roi', owner:1, hp:3, faceDown:true};
+  G.grids.p2[3*7+3].pion = {type:'roi', owner:2, hp:3, faceDown:true};
+
+  // Apply people bonus
+  if (p1people === 'starborn') G.players[1].techs.transport = 1;
+}
+
+// ════════════════════════════════════════════════════════════
+// UI HELPERS
+// ════════════════════════════════════════════════════════════
+function $(id) { return document.getElementById(id); }
+
+function notify(msg, color='var(--gold)') {
+  const n = $('notif');
+  n.textContent = msg;
+  n.style.borderColor = color;
+  n.style.color = color;
+  n.classList.remove('hidden');
+  clearTimeout(n._t);
+  n._t = setTimeout(() => n.classList.add('hidden'), 2200);
+}
+
+function addLog(msg, type='') {
+  G.log.unshift({msg, type});
+  if (G.log.length > 40) G.log.pop();
+  renderLog();
+}
+
+function renderLog() {
+  const box = $('log-box');
+  box.innerHTML = G.log.map(l =>
+    `<div class="log-entry ${l.type}">${l.msg}</div>`
+  ).join('');
+}
+
+// ════════════════════════════════════════════════════════════
+// SCREEN NAVIGATION
+// ════════════════════════════════════════════════════════════
+function showTitle() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  $('title-screen').classList.remove('hidden');
+}
+function showSetup() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  $('setup-screen').classList.remove('hidden');
+  renderPeopleGrid();
+}
+function showRules() {
+  notify('Consultez le manuel PDF téléchargeable !', 'var(--teal)');
+}
+
+// ════════════════════════════════════════════════════════════
+// TITLE SETUP
+// ════════════════════════════════════════════════════════════
+let selectedPeople = 'conquerors';
+function renderPeopleGrid() {
+  const g = $('people-grid');
+  g.innerHTML = PEOPLES.map(p => `
+    <div class="people-card ${p.id===selectedPeople?'selected':''}" onclick="selectPeople('${p.id}')">
+      <div style="font-size:1.2rem">${p.icon}</div>
+      <div class="pc-name">${p.name}</div>
+      <div class="pc-bonus">${p.bonus}</div>
+    </div>
+  `).join('');
+}
+function selectPeople(id) {
+  selectedPeople = id;
+  renderPeopleGrid();
+}
+
+// Era badges on title
+const strip = $('era-strip');
+ERAS.forEach((e, i) => {
+  const b = document.createElement('div');
+  b.className = 'era-badge';
+  b.textContent = e.name;
+  b.style.cssText = `color:${e.color};border-color:${e.color};animation-delay:${i*.1}s`;
+  strip.appendChild(b);
+});
+
+// ════════════════════════════════════════════════════════════
+// START GAME
+// ════════════════════════════════════════════════════════════
+function startGame() {
+  const p1name = $('p1name').value || 'Joueur 1';
+  const p2name = $('p2name').value || 'Joueur 2';
+  const X = $('xsize').value;
+  initState(p1name, p2name, X, selectedPeople);
+
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  $('game-screen').classList.remove('hidden');
+
+  $('p1-label').textContent = p1name;
+  $('p2-label').textContent = p2name;
+
+  addLog(`Que la conquête commence !`, 'important');
+  addLog(`${p1name} ouvre les hostilités.`);
+
+  renderAll();
+}
+
+// ════════════════════════════════════════════════════════════
+// RENDER
+// ════════════════════════════════════════════════════════════
+function renderAll() {
+  renderTopBar();
+  renderResources();
+  renderTechs();
+  renderGrids();
+  renderActionButtons();
+  renderPortraits();
+  applyEraVisuals();
+}
+
+function renderTopBar() {
+  const cp = G.currentPlayer;
+  const pname = G.players[cp].name;
+  $('turn-badge').textContent = `Tour ${G.turn} — ${pname}`;
+  const era = getCurrentEra();
+  $('era-label').textContent = `Ère : ${era.name}`;
+  $('era-label').style.borderColor = era.color;
+  $('era-label').style.color = era.color;
+  renderActionPips();
+}
+
+function getCurrentEra() {
+  let era = ERAS[0];
+  for (const e of ERAS) { if (G.turn >= e.turn) era = e; }
+  return era;
+}
+
+function renderActionPips() {
+  const pips = $('action-pips');
+  pips.innerHTML = '';
+  for (let i = 0; i < G.actionCount; i++) {
+    const d = document.createElement('div');
+    d.className = 'action-pip' + (i >= G.actionsLeft ? ' used' : '');
+    pips.appendChild(d);
+  }
+}
+
+function renderResources() {
+  const res = G.players[G.currentPlayer].resources;
+  const grid = $('res-grid');
+  grid.innerHTML = Object.entries(RES_INFO).map(([k,v]) => `
+    <div class="res-chip">
+      <span class="rc-icon">${v.icon}</span>
+      <span class="rc-name">${v.name}</span>
+      <span class="rc-count">${res[k]||0}</span>
+    </div>
+  `).join('');
+}
+
+function renderTechs() {
+  const techs = G.players[G.currentPlayer].techs;
+  const list = $('tech-list');
+  list.innerHTML = Object.entries(TECHS).map(([k,t]) => `
+    <div class="tech-item" onclick="openTechModal()">
+      <span class="ti-name">${t.icon} ${t.name}</span>
+      <div class="ti-level">
+        ${[0,1,2].map(i=>`<div class="tech-dot ${i<techs[k]?'active':''}"></div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderGrids() {
+  renderGrid('p1');
+  renderGrid('p2');
+  renderCommon();
+}
+
+function cellHTML(cell, gridId, idx) {
+  let cls = 'cell';
+  if (cell.developed) cls += ' developed';
+  if (cell.isCapital) cls += ' capital';
+  if (cell.owner === 2 && cell.developed && gridId !== 'p1') cls += ' enemy';
+
+  // Highlights
+  if (G.selectedCell && G.selectedCell.grid === gridId && G.selectedCell.idx === idx) cls += ' selected';
+
+  // Reachable / attackable highlights
+  if (G.mode === 'move' && G.selectedCell) {
+    if (isMoveTarget(gridId, idx)) cls += ' reachable';
+  }
+  if (G.mode === 'attack' && G.selectedCell) {
+    if (isAttackTarget(gridId, idx)) cls += ' attackable';
+  }
+  if (G.mode === 'develop') {
+    if (isDevelopTarget(gridId, idx)) cls += ' reachable';
+  }
+
+  let inner = '';
+  if (cell.isCapital && !cell.pion) inner = '🏛️';
+  else if (cell.resource && !cell.pion && cell.developed) inner = `<span style="font-size:.7rem">${RES_INFO[cell.resource]?.icon||'?'}</span>`;
+
+  if (cell.pion) {
+    const p = cell.pion;
+    const d = PION_DATA[p.type];
+    const ownerCls = `pion-p${p.owner}`;
+    const hpBadge = p.hp < (d?.hp||3) ? `<div class="pion-hp">${p.hp}</div>` : '';
+    inner = `<div class="pion-marker ${ownerCls} ${p.faceDown?'face-down':'face-up'}">${p.faceDown ? (p.owner===G.currentPlayer?d?.icon||'?':'❓') : (d?.icon||'?')}${hpBadge}</div>`;
+  }
+
+  return `<div class="${cls}" onclick="clickCell('${gridId}',${idx})" title="${cell.isCapital?'Capitale':''}">${inner}</div>`;
+}
+
+function renderGrid(id) {
+  const el = $(id === 'p1' ? 'grid-p1' : 'grid-p2');
+  el.innerHTML = G.grids[id].map((cell, i) => cellHTML(cell, id, i)).join('');
+}
+
+function renderCommon() {
+  const el = $('grid-common');
+  el.innerHTML = G.grids.common.map((cell, i) => cellHTML(cell, 'common', i)).join('');
+}
+
+function renderActionButtons() {
+  const cp = G.currentPlayer;
+  const btns = [
+    {id:'btn-move',    icon:'🏃', label:'Déplacer',   mode:'move',    cost:'1 action',  disabled: false},
+    {id:'btn-attack',  icon:'⚔️', label:'Attaquer',   mode:'attack',  cost:'1 action',  disabled: false},
+    {id:'btn-develop', icon:'🗺️', label:'Développer', mode:'develop', cost:'1a + 1res', disabled: false},
+    {id:'btn-recruit', icon:'👥', label:'Recruter',   mode:'recruit', cost:'1a + res',  disabled: false},
+    {id:'btn-collect', icon:'💰', label:'Collecter',  mode:'collect', cost:'1 action',  disabled: false},
+    {id:'btn-tech',    icon:'🔬', label:'Technologie',mode:'tech',    cost:'1a + res',  disabled: false},
+  ];
+
+  $('action-buttons').innerHTML = btns.map(b => `
+    <button class="action-btn ${G.mode===b.mode?'active-mode':''}" onclick="setMode('${b.mode}')" ${b.disabled||G.actionsLeft<=0?'disabled':''}>
+      <span class="ab-icon">${b.icon}</span> ${b.label}
+      <span class="ab-cost">${b.cost}</span>
+    </button>
+  `).join('');
+}
+
+function renderPortraits() {
+  $('player-portraits').innerHTML = [1,2].map(p => `
+    <div class="player-portrait ${G.currentPlayer===p?'active-player':''}">
+      <div class="portrait-dot" style="background:${p===1?'var(--gold)':'var(--blue)'}"></div>
+      <span>${G.players[p].name}</span>
+      <span style="color:var(--muted);font-size:.6rem">
+        ${Object.values(G.players[p].resources).reduce((a,b)=>a+b,0)} res
+      </span>
+    </div>
+  `).join('');
+}
+
+// ════════════════════════════════════════════════════════════
+// GAME ACTIONS
+// ════════════════════════════════════════════════════════════
+function setMode(mode) {
+  if (G.actionsLeft <= 0 && !['select'].includes(mode)) {
+    notify('Plus d\'actions ce tour !', 'var(--red)');
+    return;
+  }
+  if (mode === 'recruit') { openShopModal(); return; }
+  if (mode === 'tech') { openTechModal(); return; }
+  if (mode === 'collect') { doCollect(); return; }
+
+  G.mode = (G.mode === mode) ? 'select' : mode;
+  G.selectedCell = null;
+  renderAll();
+
+  const labels = {move:'Sélectionnez un pion à déplacer.', attack:'Sélectionnez votre pion attaquant.', develop:'Sélectionnez une case à développer.'};
+  $('selected-info').innerHTML = labels[G.mode] || 'Cliquez sur une case.';
+}
+
+function clickCell(gridId, idx) {
+  const cell = G.grids[gridId][idx];
+
+  if (G.mode === 'select') {
+    G.selectedCell = {grid: gridId, idx};
+    showCellInfo(cell);
+    renderGrids();
+    return;
+  }
+
+  if (G.mode === 'move') {
+    if (!G.selectedCell) {
+      if (cell.pion && cell.pion.owner === G.currentPlayer) {
+        G.selectedCell = {grid: gridId, idx};
+        renderGrids();
+        $('selected-info').innerHTML = `<strong>${PION_DATA[cell.pion.type]?.name}</strong> sélectionné. Choisissez la destination.`;
+      }
+    } else {
+      if (isMoveTarget(gridId, idx)) {
+        movePion(G.selectedCell.grid, G.selectedCell.idx, gridId, idx);
+      } else if (cell.pion && cell.pion.owner === G.currentPlayer) {
+        G.selectedCell = {grid: gridId, idx};
+        renderGrids();
+      }
+    }
+    return;
+  }
+
+  if (G.mode === 'attack') {
+    if (!G.selectedCell) {
+      if (cell.pion && cell.pion.owner === G.currentPlayer) {
+        G.selectedCell = {grid: gridId, idx};
+        renderGrids();
+        $('selected-info').innerHTML = `<strong>${PION_DATA[cell.pion.type]?.name}</strong> prêt à attaquer. Choisissez une cible.`;
+      }
+    } else {
+      if (isAttackTarget(gridId, idx)) {
+        doAttack(G.selectedCell.grid, G.selectedCell.idx, gridId, idx);
+      }
+    }
+    return;
+  }
+
+  if (G.mode === 'develop') {
+    if (isDevelopTarget(gridId, idx)) {
+      doDevelop(gridId, idx);
+    }
+    return;
+  }
+}
+
+function showCellInfo(cell) {
+  const p = cell.pion;
+  const cp = G.currentPlayer;
+  if (p) {
+    const d = PION_DATA[p.type];
+    const visible = p.owner === cp || !p.faceDown;
+    if (visible && d) {
+      $('selected-info').innerHTML = `<strong>${d.icon} ${d.name}</strong> (${p.owner===cp?'Allié':'Ennemi'}) — ATK ${d.atk} / DEF ${d.def} / PV ${p.hp} — <em>${d.desc}</em>`;
+    } else {
+      $('selected-info').innerHTML = `<strong>❓ Pion inconnu</strong> — Ennemi. Utilisez Attaque pour le révéler.`;
+    }
+  } else if (cell.isCapital) {
+    $('selected-info').innerHTML = `<strong>🏛️ Capitale</strong> — Case protégée. DEF +2 pour tous les pions ici.`;
+  } else if (cell.developed) {
+    $('selected-info').innerHTML = `Case développée${cell.resource ? ` — Contient : ${RES_INFO[cell.resource]?.icon} ${RES_INFO[cell.resource]?.name}` : ''}.`;
+  } else {
+    $('selected-info').innerHTML = `Case non développée. Utilisez Développer pour l\'activer.`;
+  }
+}
+
+// Movement logic
+function getAdjacent(gridId, idx) {
+  const COLS = gridId === 'common' ? 5 : 7;
+  const ROWS = 7;
+  const r = Math.floor(idx / COLS);
+  const c = idx % COLS;
+  const adj = [];
+  if (r > 0) adj.push({g: gridId, i: (r-1)*COLS+c});
+  if (r < ROWS-1) adj.push({g: gridId, i: (r+1)*COLS+c});
+  if (c > 0) adj.push({g: gridId, i: r*COLS+(c-1)});
+  if (c < COLS-1) adj.push({g: gridId, i: r*COLS+(c+1)});
+  return adj;
+}
+
+function isMoveTarget(gridId, idx) {
+  if (!G.selectedCell) return false;
+  const sc = G.selectedCell;
+  const srcCell = G.grids[sc.grid][sc.idx];
+  if (!srcCell.pion) return false;
+  const adj = getAdjacent(sc.grid, sc.idx);
+  const target = G.grids[gridId][idx];
+  return adj.some(a => a.g === gridId && a.i === idx) && target.developed && !target.pion;
+}
+
+function movePion(fromGrid, fromIdx, toGrid, toIdx) {
+  const src = G.grids[fromGrid][fromIdx];
+  const dst = G.grids[toGrid][toIdx];
+  dst.pion = src.pion;
+  src.pion = null;
+  spendAction();
+  G.selectedCell = null;
+  G.mode = 'select';
+  addLog(`${PION_DATA[dst.pion.type]?.name} avance.`);
+  renderAll();
+}
+
+function isDevelopTarget(gridId, idx) {
+  const cp = G.currentPlayer;
+  const cell = G.grids[gridId][idx];
+  if (cell.developed) return false;
+  // Must be owner's grid or common
+  if (gridId === 'p1' && cp !== 1) return false;
+  if (gridId === 'p2' && cp !== 2) return false;
+  // Must be adjacent to owned developed cell
+  const adj = getAdjacent(gridId, idx);
+  return adj.some(a => {
+    const ac = G.grids[a.g]?.[a.i];
+    return ac && ac.developed && (ac.owner === cp || (a.g === 'common' && ac.owner === null));
+  });
+}
+
+function doDevelop(gridId, idx) {
+  const cp = G.currentPlayer;
+  const res = G.players[cp].resources;
+  const totalRes = res.food + res.stone + res.metal + res.wood;
+  if (totalRes < 1) { notify('Pas assez de ressources !', 'var(--red)'); return; }
+  // Spend cheapest resource
+  for (const k of ['food','wood','stone','metal']) {
+    if (res[k] > 0) { res[k]--; break; }
+  }
+  const cell = G.grids[gridId][idx];
+  cell.developed = true;
+  cell.owner = cp;
+  // Random resource on cell
+  const resTypes = ['food','stone','metal','wood','card'];
+  const weights = [30,20,20,20,10];
+  cell.resource = weightedRandom(resTypes, weights);
+  spendAction();
+  G.mode = 'select';
+  addLog(`Nouvelle case développée !`, 'important');
+  notify('Case développée ! 🗺️', 'var(--teal)');
+  renderAll();
+}
+
+function weightedRandom(items, weights) {
+  let total = weights.reduce((a,b)=>a+b,0);
+  let r = Math.random() * total;
+  for (let i=0;i<items.length;i++) { r-=weights[i]; if(r<=0) return items[i]; }
+  return items[0];
+}
+
+// Attack
+function isAttackTarget(gridId, idx) {
+  if (!G.selectedCell) return false;
+  const sc = G.selectedCell;
+  const srcCell = G.grids[sc.grid][sc.idx];
+  if (!srcCell.pion) return false;
+  const attackerData = PION_DATA[srcCell.pion.type];
+  if (!attackerData) return false;
+  const target = G.grids[gridId][idx];
+  if (!target.pion || target.pion.owner === G.currentPlayer) return false;
+  // Check range (manhattan-like, simplified to same-grid for now)
+  if (sc.grid !== gridId) return false;
+  const COLS = gridId === 'common' ? 5 : 7;
+  const sr = Math.floor(sc.idx/COLS), sc2 = sc.idx%COLS;
+  const tr = Math.floor(idx/COLS),    tc = idx%COLS;
+  const dist = Math.abs(sr-tr) + Math.abs(sc2-tc);
+  const range = attackerData.range + (G.players[G.currentPlayer].techs.militaire >= 2 ? 1 : 0);
+  return dist <= range;
+}
+
+function doAttack(atkGrid, atkIdx, defGrid, defIdx) {
+  const atkCell = G.grids[atkGrid][atkIdx];
+  const defCell = G.grids[defGrid][defIdx];
+  const atker = atkCell.pion;
+  const defer = defCell.pion;
+
+  // Reveal both
+  atker.faceDown = false;
+  defer.faceDown = false;
+
+  const atkData = PION_DATA[atker.type];
+  const defData = PION_DATA[defer.type];
+  const cp = G.currentPlayer;
+  const milLevel = G.players[cp].techs.militaire;
+
+  let atkFinal = atkData.atk + milLevel;
+  let defFinal = defData.def + (defCell.isCapital ? 2 : 0);
+
+  // Charge bonus
+  if (atker.type === 'guerrier') atkFinal += 1;
+
+  const dmg = Math.max(0, atkFinal - defFinal);
+  defer.hp -= dmg;
+
+  let outcome = dmg > 0 ? 'victory' : (dmg === 0 ? 'draw' : 'defeat');
+  if (dmg === 0) { atker.hp -= 1; } // draw: both take 1
+
+  showCombatModal(atker, defer, atkFinal, defFinal, dmg, outcome, defGrid, defIdx);
+
+  G.selectedCell = null;
+  G.mode = 'select';
+}
+
+function showCombatModal(atker, defer, atkVal, defVal, dmg, outcome, defGrid, defIdx) {
+  const ad = PION_DATA[atker.type];
+  const dd = PION_DATA[defer.type];
+  const cp = G.currentPlayer;
+  const ep = cp === 1 ? 2 : 1;
+
+  $('combat-result').innerHTML = `
+    <div class="combatant">
+      <div class="c-type">${ad.icon}</div>
+      <div class="c-name">${ad.name}</div>
+      <div class="c-stats">ATK ${atkVal}</div>
+    </div>
+    <div class="vs-text">VS</div>
+    <div class="combatant">
+      <div class="c-type">${dd.icon}</div>
+      <div class="c-name">${dd.name}</div>
+      <div class="c-stats">DEF ${defVal}</div>
+    </div>
+  `;
+
+  const rb = $('result-banner');
+  const labels = {victory:'Victoire !', defeat:'Défaite…', draw:'Égalité'};
+  rb.className = `result-banner ${outcome}`;
+  rb.textContent = labels[outcome];
+
+  const narrs = NARRATIONS[outcome];
+  $('combat-narration').textContent = `Dégâts infligés : ${dmg} — ${narrs[Math.floor(Math.random()*narrs.length)]}`;
+
+  // Store pending resolution
+  G.combatPending = {atker, defer, dmg, outcome, defGrid, defIdx};
+  $('combat-modal').classList.remove('hidden');
+  addLog(`Combat : ${ad.name} vs ${dd.name} — ${outcome==='victory'?'Victoire':'Défaite'} ! (${dmg} dégâts)`, 'combat');
+}
+
+function closeCombat() {
+  const {atker, defer, dmg, outcome, defGrid, defIdx} = G.combatPending || {};
+  $('combat-modal').classList.add('hidden');
+
+  if (defer && defer.hp <= 0) {
+    // Remove pion
+    G.grids[defGrid][defIdx].pion = null;
+    notify(`${PION_DATA[defer.type]?.name} éliminé !`, 'var(--red)');
+    addLog(`${PION_DATA[defer.type]?.name} est éliminé !`, 'combat');
+
+    // Check capital / king capture
+    if (defer.type === 'roi') {
+      G.players[defer.owner].kingCaptured = true;
+      notify('Roi capturé !', 'var(--red)');
+    }
+    if (G.grids[defGrid][defIdx]?.isCapital) {
+      G.players[defer.owner === G.currentPlayer ? (G.currentPlayer === 1 ? 2 : 1) : defer.owner].capitalCaptured = true;
+    }
+  }
+  if (atker && atker.hp <= 0) {
+    // Find attacker cell and remove
+    for (const [gid, cells] of Object.entries(G.grids)) {
+      for (const c of cells) {
+        if (c.pion === atker) { c.pion = null; break; }
+      }
+    }
+  }
+
+  spendAction();
+  checkVictory();
+  renderAll();
+}
+
+function doCollect() {
+  if (G.actionsLeft <= 0) { notify('Plus d\'actions ce tour !', 'var(--red)'); return; }
+  const cp = G.currentPlayer;
+  const myGrids = cp === 1 ? ['p1'] : ['p2'];
+  let collected = false;
+  for (const gid of myGrids) {
+    for (const cell of G.grids[gid]) {
+      if (cell.developed && cell.resource && cell.resource !== 'card') {
+        const eco = G.players[cp].techs.economique;
+        const bonus = eco;
+        G.players[cp].resources[cell.resource] = (G.players[cp].resources[cell.resource]||0) + 1 + bonus;
+        collected = true;
+        break;
+      }
+    }
+    if (collected) break;
+  }
+  if (!collected) {
+    // Give random resource
+    const k = ['food','stone','metal','wood'][Math.floor(Math.random()*4)];
+    G.players[cp].resources[k]++;
+    notify(`+1 ${RES_INFO[k].name} collecté !`, 'var(--teal)');
+    addLog(`Collecte : +1 ${RES_INFO[k].name}`);
+  } else {
+    notify('Ressources collectées !', 'var(--teal)');
+    addLog('Collecte effectuée.');
+  }
+  spendAction();
+  renderAll();
+}
+
+// ════════════════════════════════════════════════════════════
+// SHOP
+// ════════════════════════════════════════════════════════════
+function openShopModal() {
+  const cp = G.currentPlayer;
+  const res = G.players[cp].resources;
+  $('shop-title').textContent = `Recrutez un pion sur une de vos cases. Ressources disponibles : ${res.food}🌾 ${res.stone}🪨 ${res.metal}⚙️ ${res.wood}🪵`;
+
+  const buyable = Object.entries(PION_DATA).filter(([k]) => k !== 'roi');
+  $('shop-grid').innerHTML = buyable.map(([k, p]) => {
+    const canAfford = canBuy(p.cost, res);
+    const costStr = Object.entries(p.cost).map(([r,v]) => `${v}${RES_INFO[r].icon}`).join(' ');
+    return `<div class="shop-card ${canAfford?'':'cant-afford'}" onclick="${canAfford?`buyPion('${k}')`:''}">
+      <span class="sc-icon">${p.icon}</span>
+      <div class="sc-name">${p.name}</div>
+      <div>ATK ${p.atk} / DEF ${p.def}</div>
+      <div class="sc-cost">${costStr||'Gratuit'}</div>
+    </div>`;
+  }).join('');
+  $('shop-modal').classList.remove('hidden');
+}
+
+function canBuy(cost, res) {
+  return Object.entries(cost).every(([k,v]) => (res[k]||0) >= v);
+}
+
+function buyPion(type) {
+  const cp = G.currentPlayer;
+  const res = G.players[cp].resources;
+  const pData = PION_DATA[type];
+  // Deduct cost
+  Object.entries(pData.cost).forEach(([k,v]) => res[k] -= v);
+  // Place on capital
+  const capGrid = cp === 1 ? 'p1' : 'p2';
+  const capIdx = G.players[cp].capitalPos.idx;
+  const capCell = G.grids[capGrid][capIdx];
+  // Find adjacent open cell
+  let placed = false;
+  const adj = getAdjacent(capGrid, capIdx);
+  for (const a of adj) {
+    const ac = G.grids[a.g]?.[a.i];
+    if (ac && ac.developed && !ac.pion) {
+      ac.pion = {type, owner: cp, hp: pData.hp, faceDown: true};
+      placed = true;
+      break;
+    }
+  }
+  if (!placed && !capCell.pion) {
+    capCell.pion = {type, owner: cp, hp: pData.hp, faceDown: true};
+    placed = true;
+  }
+  closeShop();
+  if (placed) {
+    spendAction();
+    addLog(`${pData.name} recruté !`, 'important');
+    notify(`${pData.icon} ${pData.name} recruté !`, 'var(--gold)');
+  } else {
+    notify('Aucune case libre près de la Capitale !', 'var(--red)');
+    // Refund
+    Object.entries(pData.cost).forEach(([k,v]) => res[k] += v);
+  }
+  renderAll();
+}
+
+function closeShop() { $('shop-modal').classList.add('hidden'); }
+
+// ════════════════════════════════════════════════════════════
+// TECH
+// ════════════════════════════════════════════════════════════
+function openTechModal() {
+  const cp = G.currentPlayer;
+  const res = G.players[cp].resources;
+  const techs = G.players[cp].techs;
+
+  $('tech-grid').innerHTML = Object.entries(TECHS).map(([k, t]) => {
+    const lvl = techs[k];
+    if (lvl >= 3) {
+      return `<div class="shop-card" style="border-color:var(--teal)">
+        <span class="sc-icon">${t.icon}</span>
+        <div class="sc-name" style="color:var(--teal)">${t.name} MAX</div>
+        <div class="sc-cost">Maîtrise complète</div>
+      </div>`;
+    }
+    const next = t.levels[lvl];
+    const costStr = Object.entries(next.cost).map(([r,v]) => `${v}${RES_INFO[r]?.icon}`).join(' ');
+    const affordable = canBuy(next.cost, res);
+    return `<div class="shop-card ${affordable?'':'cant-afford'}" onclick="${affordable?`buyTech('${k}')`:''}">
+      <span class="sc-icon">${t.icon}</span>
+      <div class="sc-name">${t.name} Niv.${lvl+1}</div>
+      <div style="font-size:.65rem;color:var(--muted);margin:.2rem 0">${next.effect}</div>
+      <div class="sc-cost">${costStr}</div>
+    </div>`;
+  }).join('');
+  $('tech-modal').classList.remove('hidden');
+}
+
+function buyTech(key) {
+  const cp = G.currentPlayer;
+  const res = G.players[cp].resources;
+  const lvl = G.players[cp].techs[key];
+  const t = TECHS[key];
+  const cost = t.levels[lvl].cost;
+  Object.entries(cost).forEach(([k,v]) => res[k] -= v);
+  G.players[cp].techs[key]++;
+
+  // Apply immediate effects
+  if (key === 'productivite') {
+    G.actionCount = 1 + G.players[cp].techs.productivite;
+    G.actionsLeft = Math.min(G.actionsLeft + 1, G.actionCount);
+  }
+
+  document.getElementById('tech-modal').classList.add('hidden');
+  spendAction();
+  addLog(`Technologie : ${t.name} niveau ${G.players[cp].techs[key]} débloquée !`, 'tech');
+  notify(`🔬 ${t.name} Niv.${G.players[cp].techs[key]} !`, 'var(--teal)');
+  renderAll();
+}
+
+// ════════════════════════════════════════════════════════════
+// TURN
+// ════════════════════════════════════════════════════════════
+function spendAction() {
+  G.actionsLeft = Math.max(0, G.actionsLeft - 1);
+}
+
+function endTurn() {
+  G.currentPlayer = G.currentPlayer === 1 ? 2 : 1;
+  G.turn++;
+
+  G.actionsLeft = G.actionCount;
+
+  renderAll();
+
+  if (isAI(G.currentPlayer)) {
+    setTimeout(aiTurn, 600);
+  }
+}
+
+function getEraForTurn(turn) {
+  let era = ERAS[0];
+  for (const e of ERAS) { if (turn >= e.turn) era = e; }
+  return era;
+}
+
+function showEraTransition(era) {
+  const ov = $('era-overlay');
+  $('era-overlay-title').textContent = era.name;
+  $('era-overlay-sub').textContent = 'Une nouvelle ère commence…';
+  ov.style.background = `radial-gradient(ellipse at center, ${era.color}22 0%, var(--bg) 70%)`;
+  ov.classList.add('show');
+  notify(`Nouvelle Ère : ${era.name} !`, era.color);
+  setTimeout(() => ov.classList.remove('show'), 2500);
+}
+
+function checkVictory() {
+  for (const pid of [1, 2]) {
+    const p = G.players[pid];
+    if (p.kingCaptured && p.capitalCaptured) {
+      const winner = G.players[pid === 1 ? 2 : 1];
+      showVictory(winner, pid === 1 ? 2 : 1);
+      return;
+    }
+  }
+}
+
+function showVictory(player, pid) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  $('victory-screen').classList.remove('hidden');
+  $('victory-name').textContent = player.name;
+  const res = player.resources;
+  $('victory-stats').innerHTML = `
+    <div class="vstat"><div class="vs-n">${G.turn}</div><div class="vs-l">Tours joués</div></div>
+    <div class="vstat"><div class="vs-n">${Object.values(res).reduce((a,b)=>a+b,0)}</div><div class="vs-l">Ressources</div></div>
+    <div class="vstat"><div class="vs-n">${Object.values(player.techs).reduce((a,b)=>a+b,0)}</div><div class="vs-l">Niv. technologies</div></div>
+    <div class="vstat"><div class="vs-n">${getCurrentEra().name}</div><div class="vs-l">Ère atteinte</div></div>
+  `;
+}
+
+//
+// EFFECT
+//
+
+const EFFECT_CARDS = [
+  {
+    name: "Recrue Express",
+    effect: () => {
+      spawnUnit(G.currentPlayer, 'guerrier');
+    }
+  },
+  {
+    name: "Abondance",
+    effect: () => {
+      G.players[G.currentPlayer].resources.food += 2;
+    }
+  }
+];
+
+//
+// BUILDING
+//
+
+const BUILDINGS = {
+  fort: {name:'Fort'},
+  mine: {name:'Mine'},
+  tower:{name:'Tour'}
+};
+
+//
+// DECOR
+//
+function applyEraVisuals() {
+  const era = getCurrentEra();
+  document.body.style.background = era.color;
+}
+</script>
+</body>
+</html>
